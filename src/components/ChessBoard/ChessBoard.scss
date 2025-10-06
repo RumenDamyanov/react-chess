@@ -1,0 +1,89 @@
+@use '@styles/variables' as *;
+@use '@styles/mixins' as *;
+
+.chess-board {
+  display: inline-grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: 1fr auto;
+  gap: $space-2;
+  background-color: var(--color-bg-secondary);
+  padding: $space-4;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+
+  @include mobile {
+    padding: $space-2;
+    gap: $space-1;
+  }
+
+  // Board grid (8x8 squares)
+  &__grid {
+    grid-column: 2;
+    grid-row: 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    border: 2px solid var(--color-border-dark);
+    box-shadow: var(--shadow-md);
+  }
+
+  // Row container
+  &__row {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+  }
+
+  // Rank labels (1-8) on the left
+  &__ranks {
+    grid-column: 1;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding-right: $space-2;
+
+    @include mobile {
+      padding-right: $space-1;
+    }
+  }
+
+  &__rank-label {
+    @include flex-center;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: var(--color-text-secondary);
+    user-select: none;
+
+    @include mobile {
+      font-size: $font-size-xs;
+    }
+  }
+
+  // File labels (a-h) on the bottom
+  &__files {
+    grid-column: 2;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    padding-top: $space-2;
+
+    @include mobile {
+      padding-top: $space-1;
+    }
+  }
+
+  &__file-label {
+    @include flex-center;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: var(--color-text-secondary);
+    user-select: none;
+
+    @include mobile {
+      font-size: $font-size-xs;
+    }
+  }
+
+  // Board orientation classes (for future flip functionality)
+  // The orientation is handled in the component by reversing the grid generation
+  // CSS classes &--white and &--black are available for additional styling if needed
+}

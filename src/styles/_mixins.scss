@@ -1,0 +1,203 @@
+@use './variables' as *;
+
+// Responsive breakpoints
+@mixin mobile {
+  @media (max-width: $breakpoint-mobile) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: #{$breakpoint-mobile + 1px}) and (max-width: $breakpoint-tablet) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: #{$breakpoint-tablet + 1px}) {
+    @content;
+  }
+}
+
+// Flexbox utilities
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+// Visual feedback
+@mixin focus-ring {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+@mixin hover-lift {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+// Square sizing mixin
+@mixin square-size($size) {
+  width: $size;
+  height: $size;
+}
+
+// Board square mixin
+@mixin board-square($size) {
+  @include square-size($size);
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+
+  &:focus {
+    @include focus-ring;
+  }
+}
+
+// Button base styles
+@mixin button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $button-padding;
+  font-family: $font-family-base;
+  font-weight: $font-weight-medium;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
+// Card container
+@mixin card {
+  background: var(--color-bg-primary);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+// Text truncate
+@mixin truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Smooth transition
+@mixin transition($property: all, $duration: 0.2s, $timing: ease) {
+  transition: $property $duration $timing;
+}
+
+// Animations
+@mixin fade-in($duration: 0.3s) {
+  animation: fade-in $duration ease-in;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+@mixin slide-in($direction: bottom, $distance: 20px, $duration: 0.3s) {
+  animation: slide-in-#{$direction} $duration ease-out;
+
+  @if $direction == bottom {
+    @keyframes slide-in-bottom {
+      from {
+        opacity: 0;
+        transform: translateY($distance);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  } @else if $direction == top {
+    @keyframes slide-in-top {
+      from {
+        opacity: 0;
+        transform: translateY(-$distance);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  }
+}
+
+// Accessibility
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+// Scrollbar styling
+@mixin custom-scrollbar {
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--color-bg-secondary);
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-border-medium);
+    border-radius: 4px;
+
+    &:hover {
+      background: var(--color-border-dark);
+    }
+  }
+}
+
+// Reset button styles
+@mixin button-reset {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}

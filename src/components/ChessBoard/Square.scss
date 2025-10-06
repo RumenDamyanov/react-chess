@@ -1,0 +1,169 @@
+@use '@styles/variables' as *;
+@use '@styles/mixins' as *;
+
+.chess-square {
+  // Fluid responsive size: base on viewport width with clamp
+  width: clamp(46px, 6.4vw, $square-size-desktop);
+  height: clamp(46px, 6.4vw, $square-size-desktop);
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color var(--transition-fast);
+
+  @include mobile {
+    width: clamp(40px, 11vw, $square-size-mobile);
+    height: clamp(40px, 11vw, $square-size-mobile);
+  }
+
+  @include tablet {
+    width: clamp(48px, 7.5vw, $square-size-tablet);
+    height: clamp(48px, 7.5vw, $square-size-tablet);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  // Square colors
+  &--light {
+    background-color: var(--color-square-light);
+
+    &:hover {
+      background-color: var(--color-square-light-hover);
+    }
+  }
+
+  &--dark {
+    background-color: var(--color-square-dark);
+
+    &:hover {
+      background-color: var(--color-square-dark-hover);
+    }
+  }
+
+  // Selected square
+  &--selected {
+    &.chess-square--light {
+      background-color: var(--color-square-light-selected);
+    }
+
+    &.chess-square--dark {
+      background-color: var(--color-square-dark-selected);
+    }
+  }
+
+  // Last move highlight
+  &--last-move {
+    background-color: var(--color-highlight-last-move) !important;
+  }
+
+  // Check highlight
+  &--check {
+    background-color: var(--color-highlight-check) !important;
+  }
+
+  // Valid move highlight
+  &--valid-move {
+    background-color: var(--color-highlight-valid);
+  }
+
+  // Active piece (side to move) subtle outline
+  &--active-piece {
+    box-shadow: inset 0 0 0 3px rgba(255, 215, 0, 0.45);
+  }
+
+  &--hint-from {
+    outline: 3px solid rgba(0, 200, 255, 0.7);
+    outline-offset: -3px;
+  }
+
+  &--hint-to {
+    box-shadow: inset 0 0 0 4px rgba(0, 200, 255, 0.35);
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        circle at center,
+        rgba(0, 200, 255, 0.35) 0%,
+        rgba(0, 200, 255, 0) 70%
+      );
+      pointer-events: none;
+    }
+  }
+
+  // Piece image
+  &__piece {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+    padding: 5%;
+  }
+
+  &__debug-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: rgba(0, 0, 0, 0.65);
+    color: #fff;
+    font-size: 0.55rem;
+    padding: 2px 4px;
+    border-radius: 4px;
+    line-height: 1;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    pointer-events: none;
+    text-transform: uppercase;
+    &[data-color='white'] {
+      background: rgba(255, 255, 255, 0.85);
+      color: #111;
+    }
+  }
+
+  &__mapping-badge {
+    position: absolute;
+    bottom: 2px;
+    left: 2px;
+    background: rgba(20, 20, 20, 0.6);
+    color: #fff;
+    font-size: 0.45rem;
+    padding: 2px 3px;
+    border-radius: 3px;
+    line-height: 0.85;
+    white-space: pre;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    pointer-events: none;
+  }
+
+  // Move indicator (dot for empty squares)
+  &__move-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 25%;
+    height: 25%;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  // Capture indicator (ring around piece)
+  &__capture-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 3px solid rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    pointer-events: none;
+    box-sizing: border-box;
+  }
+}

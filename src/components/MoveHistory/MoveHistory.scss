@@ -1,0 +1,72 @@
+@use '@styles/variables' as *;
+@use '@styles/mixins' as *;
+
+.move-history {
+  @include card;
+  padding: $space-6;
+  display: flex;
+  flex-direction: column;
+  max-height: 400px;
+
+  &__title {
+    font-size: $font-size-lg;
+    margin: 0 0 $space-4 0;
+    font-weight: $font-weight-semibold;
+  }
+
+  &__empty {
+    color: var(--color-text-tertiary);
+    font-style: italic;
+  }
+
+  &__list {
+    @include custom-scrollbar;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+  }
+
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+    font-family: $font-family-mono;
+  }
+
+  &__number {
+    min-width: 28px;
+    color: var(--color-text-secondary);
+    font-weight: $font-weight-medium;
+  }
+
+  &__move-btn {
+    @include button-reset;
+    padding: $space-1 $space-2;
+    border-radius: var(--border-radius-sm);
+    background: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+    font-size: $font-size-sm;
+    cursor: pointer;
+    min-width: 52px;
+    text-align: center;
+
+    &:hover:not(:disabled) {
+      background: var(--color-bg-tertiary);
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+
+    &.is-active {
+      background: var(--color-primary-500);
+      color: var(--color-text-inverse);
+    }
+  }
+}
