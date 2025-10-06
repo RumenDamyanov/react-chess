@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 // Helper to encode HTML entities to prevent XSS
 function escapeHtml(str) {
     if (typeof str !== 'string') return str;

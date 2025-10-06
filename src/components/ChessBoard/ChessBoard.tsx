@@ -35,18 +35,20 @@ export function ChessBoard({
   showColorDebug = false,
   showMappingDebug = false,
 }: ChessBoardProps) {
-  const checkedKingSquare = useMemo(() => {
-    if (!isCheck) return null;
-    for (let row = 0; row < 8; row++) {
+  // Find the king square that's in check
+  // Note: Removing useMemo to let React Compiler optimize this
+  let checkedKingSquare: string | null = null;
+  if (isCheck) {
+    outerLoop: for (let row = 0; row < 8; row++) {
       for (let col = 0; col < 8; col++) {
         const piece = board[row][col];
         if (piece?.type === 'king' && piece.color === turn) {
-          return ChessEngine.coordsToSquare(row, col);
+          checkedKingSquare = ChessEngine.coordsToSquare(row, col);
+          break outerLoop;
         }
       }
     }
-    return null;
-  }, [board, isCheck, turn]);
+  }
 
   const boardGrid = useMemo(() => {
     const rows: React.ReactNode[] = [];
