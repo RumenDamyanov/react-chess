@@ -215,18 +215,22 @@ function App() {
   };
 
   const requestHint = () => {
-    if (aiThinking || isGameOver || isTimeout) return;
+    // Only show hints when it's the player's turn (not AI's turn)
     const isPlayersTurn = !aiEnabled || turn === playerColor;
-    if (!isPlayersTurn) return;
+    if (!isPlayersTurn || isGameOver || aiThinking) return;
     const move = ChessAI.computeBestMove(engine, 'easy');
     if (move) setHintMove({ from: move.from, to: move.to });
   };
 
+  // Clear hint when the hinted move is made
   useEffect(() => {
     if (!hintMove) return;
     const last = history[history.length - 1];
-    if (last && (last.from === hintMove.from || last.to === hintMove.to)) {
-      setHintMove(null);
+    const isHintedMoveMade = last && (last.from === hintMove.from || last.to === hintMove.to);
+    if (isHintedMoveMade) {
+      // Schedule state update to avoid synchronous update in effect
+      const timer = setTimeout(() => setHintMove(null), 0);
+      return () => clearTimeout(timer);
     }
   }, [history, hintMove]);
 
