@@ -1,4 +1,14 @@
 /* eslint-disable */
+// Helper to encode HTML entities to prevent XSS
+function escapeHtml(str) {
+    if (typeof str !== 'string') return str;
+    return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+       .replace(/'/g, "&#39;");
+}
 var addSorting = (function() {
     'use strict';
     var cols,
@@ -102,6 +112,8 @@ var addSorting = (function() {
             val = colNode.getAttribute('data-value');
             if (col.type === 'number') {
                 val = Number(val);
+            } else {
+                val = escapeHtml(val);
             }
             data[col.key] = val;
         }
