@@ -61,9 +61,5 @@
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.1",
     "vite": "^7.1.10"
-  },
-  "overrides": {
-    "glob": "^10.4.5",
-    "inflight": "npm:@zkochan/inflight@^1.0.6"
   }
 }
