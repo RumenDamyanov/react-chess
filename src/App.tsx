@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { Color } from '@rumenx/chess/types';
 import { ChessBoard } from './components/ChessBoard/ChessBoard';
-import { useChessGame } from './hooks/useChessGame';
+import { useChessBackendGame } from './hooks/useChessBackendGame';
+import { useBackend, BACKEND_PRESETS, type BackendId } from './providers';
 import { ChessAI, type AIDifficulty } from './services/ChessAI';
 import MoveHistory from './components/MoveHistory/MoveHistory';
 import PromotionDialog from './components/PromotionDialog/PromotionDialog';
@@ -10,6 +11,19 @@ import { loadJSON, saveJSON, remove as removeStorage } from './utils/persist';
 import './App.scss';
 
 function App() {
+  // Backend context
+  const {
+    backendId,
+    switchBackend,
+    backends,
+    connected,
+    connectionError,
+    checking,
+    checkConnection,
+    capabilities,
+    setBackendUrl,
+  } = useBackend();
+
   // Persistent settings
   const [playerColor, setPlayerColor] = useState<Color>(() => loadJSON('rc_playerColor', 'white'));
   const [whiteName, setWhiteName] = useState<string>(() => loadJSON('rc_whiteName', 'You'));
@@ -64,7 +78,7 @@ function App() {
     saveJSON('rc_showMappingDebug', showMappingDebug);
   }, [showMappingDebug]);
 
-  // Chess game hook
+  // Chess game hook (backend-aware)
   const {
     board,
     turn,
@@ -92,7 +106,9 @@ function App() {
     setTimeControlPreset,
     isTimeout,
     timeoutWinner,
-  } = useChessGame();
+    loading: gameLoading,
+    error: gameError,
+  } = useChessBackendGame();
 
   // Time control preset state (minutes + increment seconds)
   const [tcPreset, setTcPreset] = useState<{ m: number | null; inc: number }>(() =>
@@ -271,20 +287,94 @@ function App() {
       <header className="app__header">
         <h1 className="app__title">React Chess</h1>
         <p className="app__subtitle">
-          Powered by{' '}
-          <a
-            href="https://www.npmjs.com/package/@rumenx/chess"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            @rumenx/chess
-          </a>
+          Backend:{' '}
+          <strong>{backends[backendId].label}</strong>
+          {backendId !== 'local' && (
+            <span
+              className={`app__connection-dot ${connected ? 'app__connection-dot--ok' : connected === false ? 'app__connection-dot--err' : 'app__connection-dot--pending'}`}
+              title={connected ? 'Connected' : connectionError ?? 'Checking…'}
+            />
+          )}
         </p>
       </header>
 
       <main className="app__main layout-3col">
         {/* Left Column: Settings */}
         <div className="layout-3col__left">
+          {/* Backend Picker */}
+          <div className="board-settings">
+            <h3 className="board-settings__title">Backend Engine</h3>
+            <div className="board-settings__option">
+              <label className="board-settings__label" htmlFor="backend-select">
+                Engine:
+              </label>
+              <select
+                id="backend-select"
+                className="board-settings__select"
+                value={backendId}
+                onChange={(e) => {
+                  const id = e.target.value as BackendId;
+                  switchBackend(id);
+                  resetGame(aiEnabled ? 'white' : playerColor);
+                }}
+              >
+                {(Object.keys(BACKEND_PRESETS) as BackendId[]).map((id) => (
+                  <option key={id} value={id}>
+                    {BACKEND_PRESETS[id].label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {backendId !== 'local' && (
+              <>
+                <div className="board-settings__option">
+                  <label className="board-settings__label" htmlFor="backend-url">
+                    URL:
+                  </label>
+                  <input
+                    id="backend-url"
+                    className="board-settings__select"
+                    type="text"
+                    value={backends[backendId].url ?? ''}
+                    onChange={(e) => setBackendUrl(backendId, e.target.value)}
+                    placeholder="http://localhost:8082"
+                  />
+                </div>
+                <div className="board-settings__option">
+                  <span
+                    className={`board-settings__connection-status ${
+                      connected
+                        ? 'board-settings__connection-status--ok'
+                        : connected === false
+                          ? 'board-settings__connection-status--err'
+                          : 'board-settings__connection-status--pending'
+                    }`}
+                  >
+                    {checking
+                      ? '⏳ Checking…'
+                      : connected
+                        ? '✅ Connected'
+                        : `❌ ${connectionError ?? 'Disconnected'}`}
+                  </span>
+                  <button
+                    className="board-settings__button board-settings__button--small"
+                    onClick={() => checkConnection()}
+                    disabled={checking}
+                    type="button"
+                  >
+                    🔄 Retry
+                  </button>
+                </div>
+                {!capabilities.undo && (
+                  <div className="board-settings__note">
+                    ⚠️ This backend does not support undo
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+
+          {/* Game Settings */}
           <div className="board-settings">
             <h3 className="board-settings__title">Game Settings</h3>
             <div className="board-settings__option">
@@ -498,6 +588,16 @@ function App() {
               />
             )}
             <div className="board-info" aria-live="polite">
+              {gameLoading && (
+                <div className="board-info__banner board-info__banner--loading">
+                  ⏳ Connecting to {backends[backendId].label}…
+                </div>
+              )}
+              {gameError && (
+                <div className="board-info__banner board-info__banner--error">
+                  ⚠️ {gameError}
+                </div>
+              )}
               <div className="board-info__row">
                 <span className="board-info__status">{statusMessage}</span>
                 {aiEnabled && turn !== playerColor && !isGameOver && !isTimeout && (
@@ -522,6 +622,8 @@ function App() {
                 </span>
                 <span className="board-info__divider" />
                 <span>Mode: {aiEnabled ? 'vs AI' : 'Local'}</span>
+                <span className="board-info__divider" />
+                <span>Engine: {backends[backendId].label}</span>
                 <span className="board-info__divider" />
                 <span>Moves: {history.length}</span>
                 {timeControl.initialMs !== null && (
@@ -599,8 +701,8 @@ function App() {
               <button
                 className="game-controls__button game-controls__button--secondary"
                 onClick={undoMove}
-                disabled={!canUndo}
-                title="Undo last move"
+                disabled={!canUndo || !capabilities.undo}
+                title={capabilities.undo ? 'Undo last move' : 'Undo not supported by this backend'}
               >
                 ← Undo
               </button>

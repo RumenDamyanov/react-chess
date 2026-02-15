@@ -42,6 +42,30 @@
     }
   }
 
+  &__connection-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-left: $space-2;
+    vertical-align: middle;
+
+    &--ok {
+      background-color: #22c55e;
+      box-shadow: 0 0 4px #22c55e80;
+    }
+
+    &--err {
+      background-color: #ef4444;
+      box-shadow: 0 0 4px #ef444480;
+    }
+
+    &--pending {
+      background-color: #f59e0b;
+      animation: pulse-dot 1.2s infinite;
+    }
+  }
+
   // Main content
   &__main {
     flex: 1;
@@ -316,6 +340,55 @@
       box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.35);
     }
   }
+
+  &__connection-status {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    display: inline-block;
+    margin-right: $space-2;
+
+    &--ok {
+      color: #22c55e;
+    }
+
+    &--err {
+      color: #ef4444;
+    }
+
+    &--pending {
+      color: #f59e0b;
+    }
+  }
+
+  &__button--small {
+    @include button-reset;
+    padding: $space-1 $space-3;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    border-radius: var(--border-radius-sm);
+    border: 1px solid var(--color-border-medium);
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+
+    &:hover {
+      background-color: var(--color-bg-tertiary);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  &__note {
+    font-size: $font-size-xs;
+    color: #f59e0b;
+    padding: $space-2;
+    border-radius: var(--border-radius-sm);
+    background-color: rgba(245, 158, 11, 0.1);
+  }
 }
 
 // Move History
@@ -575,6 +648,23 @@
   &__pill--danger {
     background: #dc2626;
   }
+  &__banner {
+    padding: $space-2 $space-3;
+    border-radius: var(--border-radius-sm);
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    text-align: center;
+
+    &--loading {
+      background-color: rgba(59, 130, 246, 0.12);
+      color: var(--color-primary-600);
+    }
+
+    &--error {
+      background-color: rgba(239, 68, 68, 0.12);
+      color: #ef4444;
+    }
+  }
   &__meta {
     font-size: $font-size-xs;
     opacity: 0.8;
@@ -657,5 +747,15 @@
   }
   100% {
     box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
+  }
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
   }
 }
