@@ -1,0 +1,44 @@
+# Dependency directories
+node_modules/
+
+# Build output (we COPY source and rebuild inside Docker)
+dist/
+dist-ssr/
+
+# Test & coverage
+coverage/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+tests/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+*.local
+
+# Git
+.git/
+.gitignore
+
+# Docs (not needed in image)
+*.md
+LICENSE*
+CHANGELOG*
+CONTRIBUTING*
+CODE_OF_CONDUCT*
+SECURITY*
+FUNDING*
+wiki/
+docs/
+
+# CI config
+.github/
+.prettierrc
+.prettierignore
+eslint.config.js
+jest.config.ts
+tsconfig.jest.json
+.ai/

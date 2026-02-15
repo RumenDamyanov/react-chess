@@ -9,9 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Multi-backend provider system** — switch between local (@rumenx/chess), rust-chess, go-chess, and js-chess backends
+  - `ChessProvider` interface with unified types across all backends
+  - `LocalProvider` — in-browser engine wrapper (zero latency, offline-capable)
+  - `RemoteProvider` — HTTP-based provider with per-backend response adapters
+  - Response normalizers for rust-chess (camelCase), go-chess (snake_case), js-chess (/api/v1/)
+  - `BackendContext` — React context with health checking, localStorage persistence, env var support
+  - `useChessBackendGame` hook — backend-aware game hook with optimistic local updates
+- **Backend picker UI** in settings panel
+  - Engine selector dropdown (Local / Rust / Go / JS)
+  - Custom URL input for remote backends
+  - Live connection status indicator (checking / connected / error) with retry
+  - Capability warnings (e.g. "Go backend does not support undo")
+- **Header connection indicator** — colored dot showing backend connection state
+- **Environment variable configuration** — `VITE_CHESS_BACKEND`, `VITE_CHESS_RUST_URL`, `VITE_CHESS_GO_URL`, `VITE_CHESS_JS_URL`
+- **`.env.example`** with all configuration options documented
 - Game archival subsystem (in progress)
 - Replay mode UI (planned)
-- Comprehensive test suite (planned)
 
 ### Changed
 
