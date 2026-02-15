@@ -93,8 +93,8 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
   if (!res.ok) {
     // Normalise error extraction across backends
     const errObj = body?.error;
-    const code = typeof errObj === 'object' ? errObj?.code : errObj ?? 'UNKNOWN';
-    const msg = typeof errObj === 'object' ? errObj?.message : body?.message ?? res.statusText;
+    const code = typeof errObj === 'object' ? errObj?.code : (errObj ?? 'UNKNOWN');
+    const msg = typeof errObj === 'object' ? errObj?.message : (body?.message ?? res.statusText);
     throw new ApiError(res.status, String(code), String(msg));
   }
   return body as T;
@@ -159,7 +159,7 @@ export class RemoteProvider implements ChessProvider {
     gameId: string,
     from: string,
     to: string,
-    promotion?: string,
+    promotion?: string
   ): Promise<NormGameState> {
     const body: Record<string, unknown> = { from, to };
     if (promotion) body.promotion = promotion;
@@ -183,7 +183,7 @@ export class RemoteProvider implements ChessProvider {
   async getLegalMoves(gameId: string, fromSquare?: string): Promise<NormLegalMove[]> {
     const qs = fromSquare ? `?from=${fromSquare}` : '';
     const raw = await request<Record<string, unknown>>(
-      this.url(`/games/${gameId}/legal-moves${qs}`),
+      this.url(`/games/${gameId}/legal-moves${qs}`)
     );
     return this.adapter.normLegalMoves(raw);
   }
@@ -230,9 +230,7 @@ export class RemoteProvider implements ChessProvider {
 
   async getAnalysis(gameId: string, depth?: number): Promise<NormAnalysis> {
     const qs = depth ? `?depth=${depth}` : '';
-    const raw = await request<Record<string, unknown>>(
-      this.url(`/games/${gameId}/analysis${qs}`),
-    );
+    const raw = await request<Record<string, unknown>>(this.url(`/games/${gameId}/analysis${qs}`));
     return this.adapter.normAnalysis(raw);
   }
 

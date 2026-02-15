@@ -85,7 +85,7 @@ function envUrls(): Partial<Record<BackendId, string>> {
 export function BackendProvider({ children }: { children: ReactNode }) {
   // Persisted backend choice (falls back to env var, then 'local')
   const [backendId, setBackendId] = useState<BackendId>(() =>
-    loadJSON<BackendId>(STORAGE_KEY_BACKEND, envBackend()),
+    loadJSON<BackendId>(STORAGE_KEY_BACKEND, envBackend())
   );
 
   // Persisted URL overrides per backend (seeded from env vars)
@@ -96,7 +96,9 @@ export function BackendProvider({ children }: { children: ReactNode }) {
   });
 
   // Connection state
-  const [connected, setConnected] = useState<boolean | null>(backendId === 'local' ? true : null);
+  const [connected, setConnected] = useState<boolean | null>(
+    backendId === 'local' || backendId === 'js' ? true : null
+  );
   const [connectionError, setConnectionError] = useState<string | null>(null);
   const [checking, setChecking] = useState(false);
 
@@ -113,15 +115,15 @@ export function BackendProvider({ children }: { children: ReactNode }) {
 
   // Build provider (recreated when backend or URL changes)
   const provider = useMemo<ChessProvider>(() => {
-    if (backendId === 'local') return new LocalProvider();
+    if (backendId === 'local' || backendId === 'js') return new LocalProvider();
     const cfg = backends[backendId];
-    const url = cfg.url ?? BACKEND_PRESETS[backendId].url ?? 'http://localhost:8080';
+    const url = cfg.url ?? BACKEND_PRESETS[backendId].url ?? 'http://localhost:8083';
     return new RemoteProvider(backendId, url);
   }, [backendId, backends]);
 
   // Health check for remote backends
   const checkConnection = useCallback(async () => {
-    if (backendId === 'local') {
+    if (backendId === 'local' || backendId === 'js') {
       setConnected(true);
       setConnectionError(null);
       return;
@@ -140,9 +142,7 @@ export function BackendProvider({ children }: { children: ReactNode }) {
       }
     } catch (err) {
       setConnected(false);
-      setConnectionError(
-        err instanceof Error ? err.message : 'Cannot reach backend',
-      );
+      setConnectionError(err instanceof Error ? err.message : 'Cannot reach backend');
     } finally {
       setChecking(false);
     }
@@ -163,17 +163,14 @@ export function BackendProvider({ children }: { children: ReactNode }) {
     saveJSON(STORAGE_KEY_URLS, urlOverrides);
   }, [urlOverrides]);
 
-  const switchBackend = useCallback(
-    (id: BackendId, customUrl?: string) => {
-      if (customUrl && id !== 'local') {
-        setUrlOverrides((prev) => ({ ...prev, [id]: customUrl }));
-      }
-      setConnected(id === 'local' ? true : null);
-      setConnectionError(null);
-      setBackendId(id);
-    },
-    [],
-  );
+  const switchBackend = useCallback((id: BackendId, customUrl?: string) => {
+    if (customUrl && id !== 'local') {
+      setUrlOverrides((prev) => ({ ...prev, [id]: customUrl }));
+    }
+    setConnected(id === 'local' ? true : null);
+    setConnectionError(null);
+    setBackendId(id);
+  }, []);
 
   const setBackendUrl = useCallback((id: BackendId, url: string) => {
     setUrlOverrides((prev) => ({ ...prev, [id]: url }));
@@ -203,7 +200,7 @@ export function BackendProvider({ children }: { children: ReactNode }) {
       setBackendUrl,
       checkConnection,
       checking,
-    ],
+    ]
   );
 
   return <BackendContext.Provider value={value}>{children}</BackendContext.Provider>;

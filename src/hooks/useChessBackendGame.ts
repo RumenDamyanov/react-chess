@@ -138,7 +138,7 @@ export function useChessBackendGame(initialFEN?: string): BackendGameHook {
       setCurrentPly(state.moveCount);
       setRemoteGameId(state.id);
     },
-    [engine, updateGameState],
+    [engine, updateGameState]
   );
 
   // Auto-create remote game on mount / backend switch
@@ -220,7 +220,7 @@ export function useChessBackendGame(initialFEN?: string): BackendGameHook {
       isRemote,
       remoteGameId,
       provider,
-    ],
+    ]
   );
 
   // -----------------------------------------------------------------------
@@ -264,7 +264,7 @@ export function useChessBackendGame(initialFEN?: string): BackendGameHook {
         makeMove(selectedSquare, square);
       }
     },
-    [engine, turn, selectedSquare, makeMove],
+    [engine, turn, selectedSquare, makeMove]
   );
 
   // -----------------------------------------------------------------------
@@ -309,7 +309,7 @@ export function useChessBackendGame(initialFEN?: string): BackendGameHook {
           .finally(() => setLoading(false));
       }
     },
-    [engine, updateGameState, timeControl.initialMs, isRemote, provider, applyRemoteState],
+    [engine, updateGameState, timeControl.initialMs, isRemote, provider, applyRemoteState]
   );
 
   // -----------------------------------------------------------------------
@@ -330,7 +330,7 @@ export function useChessBackendGame(initialFEN?: string): BackendGameHook {
         });
       }
     },
-    [engine, updateGameState, isRemote, remoteGameId, provider],
+    [engine, updateGameState, isRemote, remoteGameId, provider]
   );
 
   const getFEN = useCallback(() => engine.getFEN(), [engine]);
@@ -341,7 +341,7 @@ export function useChessBackendGame(initialFEN?: string): BackendGameHook {
 
   const isValidMoveTarget = useCallback(
     (square: string): boolean => legalMoves.some((m) => m.to === square),
-    [legalMoves],
+    [legalMoves]
   );
 
   const getAllLegalMoves = useCallback(() => engine.getLegalMoves(), [engine]);
@@ -360,7 +360,7 @@ export function useChessBackendGame(initialFEN?: string): BackendGameHook {
       setLegalMoves([]);
       setCurrentPly(plyIndex);
     },
-    [engine, history, updateGameState],
+    [engine, history, updateGameState]
   );
 
   // -----------------------------------------------------------------------
@@ -377,13 +377,13 @@ export function useChessBackendGame(initialFEN?: string): BackendGameHook {
       status === 'insufficient_material' ||
       status === 'threefold_repetition' ||
       status === 'fifty_move_rule',
-    [status],
+    [status]
   );
 
   const result = useMemo(() => engine.getResult(), [engine, status]);
   const lastMove = useMemo(
     () => (history.length > 0 ? history[history.length - 1] : null),
-    [history],
+    [history]
   );
   const canUndo = useMemo(() => history.length > 0, [history]);
 
@@ -442,7 +442,7 @@ export function useChessBackendGame(initialFEN?: string): BackendGameHook {
       setTimeoutWinner(null);
       setLastTick(null);
     },
-    [],
+    []
   );
 
   return {

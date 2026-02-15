@@ -176,13 +176,8 @@ function App() {
       if (cancelled) return;
       const move = ChessAI.computeBestMove(engine, aiDifficulty);
       if (move) {
-        selectSquare(move.from);
-        setTimeout(() => {
-          if (!cancelled) selectSquare(move.to);
-          setTimeout(() => {
-            if (!cancelled) setAiThinking(false);
-          }, 0);
-        }, 80);
+        makeMove(move.from, move.to);
+        if (!cancelled) setAiThinking(false);
       } else {
         setAiThinking(false);
       }
@@ -199,7 +194,7 @@ function App() {
     isTimeout,
     playerColor,
     engine,
-    selectSquare,
+    makeMove,
     aiDifficulty,
     history.length,
   ]);
@@ -287,12 +282,11 @@ function App() {
       <header className="app__header">
         <h1 className="app__title">React Chess</h1>
         <p className="app__subtitle">
-          Backend:{' '}
-          <strong>{backends[backendId].label}</strong>
+          Backend: <strong>{backends[backendId].label}</strong>
           {backendId !== 'local' && (
             <span
               className={`app__connection-dot ${connected ? 'app__connection-dot--ok' : connected === false ? 'app__connection-dot--err' : 'app__connection-dot--pending'}`}
-              title={connected ? 'Connected' : connectionError ?? 'Checking…'}
+              title={connected ? 'Connected' : (connectionError ?? 'Checking…')}
             />
           )}
         </p>
@@ -325,7 +319,7 @@ function App() {
                 ))}
               </select>
             </div>
-            {backendId !== 'local' && (
+            {backendId !== 'local' && backendId !== 'js' && (
               <>
                 <div className="board-settings__option">
                   <label className="board-settings__label" htmlFor="backend-url">
@@ -366,9 +360,7 @@ function App() {
                   </button>
                 </div>
                 {!capabilities.undo && (
-                  <div className="board-settings__note">
-                    ⚠️ This backend does not support undo
-                  </div>
+                  <div className="board-settings__note">⚠️ This backend does not support undo</div>
                 )}
               </>
             )}
@@ -594,9 +586,7 @@ function App() {
                 </div>
               )}
               {gameError && (
-                <div className="board-info__banner board-info__banner--error">
-                  ⚠️ {gameError}
-                </div>
+                <div className="board-info__banner board-info__banner--error">⚠️ {gameError}</div>
               )}
               <div className="board-info__row">
                 <span className="board-info__status">{statusMessage}</span>

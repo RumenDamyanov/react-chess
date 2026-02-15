@@ -43,8 +43,14 @@ export function rustNormGame(raw: Record<string, unknown>): NormGameState {
     moveHistory: history.map(rustNormMove),
     board: rustNormBoard(raw.board),
     result: rustDeriveResult(raw.status as string, raw.currentPlayer as string),
-    gameOver: ['checkmate', 'stalemate', 'draw', 'insufficient_material',
-      'threefold_repetition', 'fifty_move_rule'].includes(raw.status as string),
+    gameOver: [
+      'checkmate',
+      'stalemate',
+      'draw',
+      'insufficient_material',
+      'threefold_repetition',
+      'fifty_move_rule',
+    ].includes(raw.status as string),
   };
 }
 
@@ -64,7 +70,16 @@ function rustNormStatus(s: string): GameStatusNorm {
 
 function rustDeriveResult(status: string, currentPlayer: string): string {
   if (status === 'checkmate') return currentPlayer === 'white' ? '0-1' : '1-0';
-  if (['stalemate', 'draw', 'insufficient_material', 'threefold_repetition', 'fifty_move_rule'].includes(status)) return '1/2-1/2';
+  if (
+    [
+      'stalemate',
+      'draw',
+      'insufficient_material',
+      'threefold_repetition',
+      'fifty_move_rule',
+    ].includes(status)
+  )
+    return '1/2-1/2';
   return '*';
 }
 
@@ -89,8 +104,18 @@ function rustNormPiece(raw: unknown): NormPiece | undefined {
   // Single string char encoding
   if (typeof raw === 'string' && raw.length === 1) {
     const map: Record<string, NormPiece['type']> = {
-      P: 'pawn', N: 'knight', B: 'bishop', R: 'rook', Q: 'queen', K: 'king',
-      p: 'pawn', n: 'knight', b: 'bishop', r: 'rook', q: 'queen', k: 'king',
+      P: 'pawn',
+      N: 'knight',
+      B: 'bishop',
+      R: 'rook',
+      Q: 'queen',
+      K: 'king',
+      p: 'pawn',
+      n: 'knight',
+      b: 'bishop',
+      r: 'rook',
+      q: 'queen',
+      k: 'king',
     };
     const type = map[raw];
     if (type) return { type, color: raw === raw.toUpperCase() ? 'white' : 'black' };
@@ -101,7 +126,7 @@ function rustNormPiece(raw: unknown): NormPiece | undefined {
 function rustNormBoard(raw: unknown): (NormPiece | null)[][] | undefined {
   if (!Array.isArray(raw)) return undefined;
   return (raw as (string | null)[][]).map((row) =>
-    row.map((cell) => (cell ? (rustNormPiece(cell) ?? null) : null)),
+    row.map((cell) => (cell ? (rustNormPiece(cell) ?? null) : null))
   );
 }
 
@@ -149,8 +174,15 @@ export function goNormGame(raw: Record<string, unknown>): NormGameState {
     moveHistory: history.map(goNormMove),
     board: undefined, // go-chess returns a text diagram, not useful for UI
     result: goDeriveResult(raw.status as string),
-    gameOver: ['white_wins', 'black_wins', 'stalemate', 'draw',
-      'insufficient_material', 'threefold_repetition', 'fifty_move_rule'].includes(raw.status as string),
+    gameOver: [
+      'white_wins',
+      'black_wins',
+      'stalemate',
+      'draw',
+      'insufficient_material',
+      'threefold_repetition',
+      'fifty_move_rule',
+    ].includes(raw.status as string),
   };
 }
 
@@ -172,7 +204,16 @@ function goNormStatus(s: string): GameStatusNorm {
 function goDeriveResult(status: string): string {
   if (status === 'white_wins') return '1-0';
   if (status === 'black_wins') return '0-1';
-  if (['stalemate', 'draw', 'insufficient_material', 'threefold_repetition', 'fifty_move_rule'].includes(status)) return '1/2-1/2';
+  if (
+    [
+      'stalemate',
+      'draw',
+      'insufficient_material',
+      'threefold_repetition',
+      'fifty_move_rule',
+    ].includes(status)
+  )
+    return '1/2-1/2';
   return '*';
 }
 

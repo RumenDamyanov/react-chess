@@ -43,14 +43,13 @@ export const BACKEND_PRESETS: Record<BackendId, BackendConfig> = {
   go: {
     id: 'go',
     label: 'Go Engine',
-    url: 'http://localhost:8080',
+    url: 'http://localhost:8083',
     description: 'go-chess Gin REST API',
   },
   js: {
     id: 'js',
     label: 'JS Engine',
-    url: 'http://localhost:8081',
-    description: 'js-chess / npm-chess Express REST API',
+    description: 'In-browser engine via @rumenx/chess (same as Local)',
   },
 };
 
