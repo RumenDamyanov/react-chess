@@ -367,8 +367,8 @@ export function useChessBackendGame(initialFEN?: string): BackendGameHook {
   // Computed
   // -----------------------------------------------------------------------
 
-  const isGameOver = useMemo(() => engine.isGameOver(), [engine, status]);
-  const isCheck = useMemo(() => engine.isInCheck(), [engine, status]);
+  const isGameOver = useMemo(() => engine.isGameOver(), [engine]);
+  const isCheck = useMemo(() => engine.isInCheck(), [engine]);
   const isCheckmate = useMemo(() => status === 'checkmate', [status]);
   const isStalemate = useMemo(() => status === 'stalemate', [status]);
   const isDraw = useMemo(
@@ -380,7 +380,7 @@ export function useChessBackendGame(initialFEN?: string): BackendGameHook {
     [status]
   );
 
-  const result = useMemo(() => engine.getResult(), [engine, status]);
+  const result = useMemo(() => engine.getResult(), [engine]);
   const lastMove = useMemo(
     () => (history.length > 0 ? history[history.length - 1] : null),
     [history]
@@ -391,7 +391,7 @@ export function useChessBackendGame(initialFEN?: string): BackendGameHook {
   const finalResult = useMemo(() => {
     if (timeoutWinner) return timeoutWinner === 'white' ? '1-0' : '0-1';
     return engine.getResult();
-  }, [timeoutWinner, engine, status]);
+  }, [timeoutWinner, engine]);
 
   // -----------------------------------------------------------------------
   // Clock ticking
