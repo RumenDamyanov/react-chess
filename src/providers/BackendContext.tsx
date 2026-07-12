@@ -79,6 +79,26 @@ function envUrls(): Partial<Record<BackendId, string>> {
 }
 
 // ---------------------------------------------------------------------------
+// Pure helper — no setState, safe to call from effects via .then()
+// ---------------------------------------------------------------------------
+
+async function fetchHealthStatus(
+  url: string
+): Promise<{ connected: boolean; error: string | null }> {
+  try {
+    const res = await fetch(`${url}/health`, { signal: AbortSignal.timeout(5000) });
+    return res.ok
+      ? { connected: true, error: null }
+      : { connected: false, error: `Health check returned ${res.status}` };
+  } catch (err) {
+    return {
+      connected: false,
+      error: err instanceof Error ? err.message : 'Cannot reach backend',
+    };
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Provider component
 // ---------------------------------------------------------------------------
 
@@ -100,7 +120,7 @@ export function BackendProvider({ children }: { children: ReactNode }) {
     backendId === 'local' || backendId === 'js' ? true : null
   );
   const [connectionError, setConnectionError] = useState<string | null>(null);
-  const [checking, setChecking] = useState(false);
+  const [checking, setChecking] = useState<boolean>(backendId !== 'local' && backendId !== 'js');
 
   // Build configs with URL overrides
   const backends = useMemo<Record<BackendId, BackendConfig>>(() => {
@@ -121,7 +141,7 @@ export function BackendProvider({ children }: { children: ReactNode }) {
     return new RemoteProvider(backendId, url);
   }, [backendId, backends]);
 
-  // Health check for remote backends
+  // Health check for remote backends — called from event handlers (onClick), not effects
   const checkConnection = useCallback(async () => {
     if (backendId === 'local' || backendId === 'js') {
       setConnected(true);
@@ -131,27 +151,32 @@ export function BackendProvider({ children }: { children: ReactNode }) {
     setChecking(true);
     const cfg = backends[backendId];
     const url = cfg.url ?? BACKEND_PRESETS[backendId].url ?? '';
-    try {
-      const res = await fetch(`${url}/health`, { signal: AbortSignal.timeout(5000) });
-      if (res.ok) {
-        setConnected(true);
-        setConnectionError(null);
-      } else {
-        setConnected(false);
-        setConnectionError(`Health check returned ${res.status}`);
-      }
-    } catch (err) {
-      setConnected(false);
-      setConnectionError(err instanceof Error ? err.message : 'Cannot reach backend');
-    } finally {
-      setChecking(false);
-    }
+    const result = await fetchHealthStatus(url);
+    setConnected(result.connected);
+    setConnectionError(result.error);
+    setChecking(false);
   }, [backendId, backends]);
 
-  // Auto-check when backend changes
+  // Auto-check when backend changes — setState only in .then() callback, never synchronously
   useEffect(() => {
-    checkConnection();
-  }, [checkConnection]);
+    if (backendId === 'local' || backendId === 'js') return;
+
+    let ignore = false;
+    const cfg = backends[backendId];
+    const url = cfg.url ?? BACKEND_PRESETS[backendId].url ?? '';
+
+    fetchHealthStatus(url).then((result) => {
+      if (!ignore) {
+        setConnected(result.connected);
+        setConnectionError(result.error);
+        setChecking(false);
+      }
+    });
+
+    return () => {
+      ignore = true;
+    };
+  }, [backendId, backends]);
 
   // Persist backend choice
   useEffect(() => {
@@ -169,6 +194,7 @@ export function BackendProvider({ children }: { children: ReactNode }) {
     }
     setConnected(id === 'local' ? true : null);
     setConnectionError(null);
+    setChecking(id !== 'local' && id !== 'js');
     setBackendId(id);
   }, []);
 
