@@ -196,10 +196,4 @@ export class ChessAI {
 }
 // Include legacy 'random' for persistence compatibility; UI will map to 'harmless'
 export type AIDifficulty =
-  | 'harmless'
-  | 'easy'
-  | 'medium'
-  | 'hard'
-  | 'expert'
-  | 'godlike'
-  | 'random';
+  'harmless' | 'easy' | 'medium' | 'hard' | 'expert' | 'godlike' | 'random';
