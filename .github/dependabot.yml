@@ -8,10 +8,13 @@ updates:
       interval: "weekly"
       day: "friday"
       time: "09:00"
+      timezone: "UTC"
     open-pull-requests-limit: 10
     commit-message:
       prefix: "chore"
       include: "scope"
+    assignees:
+      - "RumenDamyanov"
     reviewers:
       - "RumenDamyanov"
     labels:
@@ -31,7 +34,10 @@ updates:
       interval: "weekly"
       day: "friday"
       time: "09:00"
+      timezone: "UTC"
     open-pull-requests-limit: 5
+    assignees:
+      - "RumenDamyanov"
     reviewers:
       - "RumenDamyanov"
     commit-message:
