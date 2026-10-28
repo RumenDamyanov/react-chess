@@ -6,6 +6,9 @@
   "description": "Professional React-based chess application showcasing the @rumenx/chess npm package",
   "author": "Rumen Damyanov <contact@rumenx.com>",
   "license": "MIT",
+  "engines": {
+    "node": "^22.23.4 || ^24.22.1 || ^26.12.1"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/RumenDamyanov/react-chess.git"
@@ -32,6 +35,12 @@
     "@rumenx/chess": "^1.0.2",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
+  },
+  "overrides": {
+    "body-parser": "^2.4.0",
+    "compression": "^1.8.2",
+    "proxy-addr": "^2.0.8",
+    "qs": "^6.17.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

@@ -4,6 +4,12 @@
 
 Until multiple release lines exist, only the latest `main` (and most recent tagged version) receives fixes. After branching, a table will document supported maintenance lines.
 
+Build and develop with **Node.js 22.23.4+**, **24.22.1+**, or **26.12.1+**. Node2Shell
+([CVE-2026-111497](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases))
+is an out-of-bounds write in the Brotli decoder bundled with Node.js. It is in
+the runtime. Node.js 18 and 20 are end of life and will not receive a fix. The
+production image is pinned to `node:22.23.4-alpine`.
+
 ## Reporting a Vulnerability
 
 Please use the following responsible disclosure process:

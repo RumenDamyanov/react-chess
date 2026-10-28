@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+
+- Require Node.js 22.23.4+, 24.22.1+, or 26.12.1+. Node.js 18 and 20 are end of life and have no fix for Node2Shell (CVE-2026-111497). CI tests 22, 24, and 26. The Docker build uses `node:22.23.4-alpine`.
+- Override `body-parser`, `compression`, `proxy-addr`, and `qs` to the patched releases pulled in by `@rumenx/chess`.
+
 ### Added
 
 - **Multi-backend provider system** — switch between local (@rumenx/chess), rust-chess, go-chess, and js-chess backends
