@@ -46,6 +46,13 @@ The engine dynamically reduces depth in pathological or large branching scenario
 
 Time format is \`M+I\` (minutes base + seconds increment). Unlimited mode disables the clocks. When a side reaches 0 the opponent wins on time; result string (\`1-0\` / \`0-1\`) reflects the flag event.
 
+## Requirements
+
+- **Node.js**: 22.23.4+, 24.22.1+, or 26.12.1+. Node.js 18 and 20 are end of
+  life and have no fix for
+  [Node2Shell](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases)
+  (CVE-2026-111497).
+
 ## 🚀 Quick Start
 
 \`\`\`bash

@@ -6,7 +6,7 @@ Thank you for your interest in contributing to React Chess! This guide will help
 
 ### Prerequisites
 
-- Node.js 18+ (LTS recommended)
+- Node.js 22.23.4+, 24.22.1+, or 26.12.1+. Node.js 18 and 20 are end of life and have no Node2Shell fix.
 - npm (bundled with Node.js)
 - Git
 
